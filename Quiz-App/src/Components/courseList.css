@@ -1,0 +1,6 @@
+.courseList
+{
+    display: grid;
+    grid-template-columns: 0.2fr 0.2fr 0.2fr 0.2fr ;
+    column-gap: 1px;
+}
