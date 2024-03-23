@@ -1,5 +1,6 @@
 import React, { useState,useEffect } from 'react';
 import CourseList from './CourseList';
+import LoadingSkeleton from './LoadingSkeleton';
 
 
 const AdminDashboard = () => 
@@ -43,7 +44,7 @@ const AdminDashboard = () =>
           <CourseList courses={courses}/>
 
         ) :(
-          <p>Loading...</p>
+          <p><LoadingSkeleton/></p>
         )}
         {/* <button onClick={addCourse}>Add Course</button> */}
       </div>

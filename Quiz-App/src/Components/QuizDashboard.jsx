@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import {useParams } from 'react-router-dom'
 import QuizList from './QuizList';
 import './quizDashboard.css'
+import LoadingSkeleton from './LoadingSkeleton';
 const QuizDashboard = () => {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
@@ -48,7 +49,9 @@ const QuizDashboard = () => {
           
         </div>
       ) : (
-        <p>Loading...</p>
+        <>
+        <p><LoadingSkeleton/></p>
+        </>
       )}
     </div>
   );
