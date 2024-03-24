@@ -1,19 +1,59 @@
 import AWS from "aws-sdk";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+import './fileUpload.css'; 
 
 function FileUpload() {
-  // Create state to store file
+  const { id } = useParams();
+  // Create state to store file and form data
   const [file, setFile] = useState(null);
+  const [quizDetails, setQuizDetails] = useState({
+    quizName: "",
+    startTime: "",
+    endTime: "",
+    marksPerQuestion: ""
+  });
 
-  // Function to upload file to s3
+  // Function to handle form input change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setQuizDetails({
+      ...quizDetails,
+      [name]: value
+    });
+  };
+
+  // Function to upload file to s3 along with form data
   const uploadFile = async () => {
-    // S3 Bucket Name
-    const S3_BUCKET = "demo-hari-6969";
+    if (!file || !quizDetails.quizName || !quizDetails.startTime || !quizDetails.endTime || !quizDetails.marksPerQuestion) {
+      alert("Please fill all the fields.");
+      return;
+    }
 
-    // S3 Region
+    // Validate file type
+    if (!file.type.startsWith('text')) {
+      alert("Please select a text file.");
+      return;
+    }
+
+    // Validate start time and end time
+    const startDateTime = new Date(quizDetails.startTime);
+    const endDateTime = new Date(quizDetails.endTime);
+    const currentTime = new Date();
+
+    if (startDateTime < currentTime || endDateTime < currentTime) {
+      alert("Start time and end time should be set to future dates.");
+      return;
+    }
+
+    if (endDateTime <= startDateTime) {
+      alert("End time should be after the start time.");
+      return;
+    }
+
+    // Your S3 configurations
+    const S3_BUCKET = "project-quiz";
     const REGION = "us-east-1";
-
-    // S3 Credentials
     AWS.config.update({
       accessKeyId: "AKIAWMV32EQ6JIEYPTPV",
       secretAccessKey: "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",
@@ -23,45 +63,41 @@ function FileUpload() {
       region: REGION,
     });
 
-    // Files Parameters
-
     const params = {
       Bucket: S3_BUCKET,
-      Key: file.name,
+      Key: id + "---" + quizDetails.quizName +"---"+ quizDetails.startTime+"---"+quizDetails.endTime+"---"+quizDetails.marksPerQuestion+".txt",
       Body: file,
     };
+    console.log(params.Key);
 
-    // Uploading file to s3
-
-    var upload = s3
-      .putObject(params)
-      .on("httpUploadProgress", (evt) => {
-        // File uploading progress
-        console.log(
-          "Uploading " + parseInt((evt.loaded * 100) / evt.total) + "%"
-        );
-      })
-      .promise();
-
-    await upload.then((err, data) => {
-      console.log(err);
-      // Fille successfully uploaded
+    // Uploading file to S3
+    try {
+      await s3.putObject(params).promise();
       alert("File uploaded successfully.");
-    });
+    } catch (error) {
+      console.error("Error uploading file: ", error);
+      alert("Failed to upload file.");
+    }
   };
-  // Function to handle file and store it to file state
+
+  // Function to handle file selection
   const handleFileChange = (e) => {
-    // Uploaded file
     const file = e.target.files[0];
-    // Changing file state
     setFile(file);
   };
+
   return (
-    <div className="App">
-      <div>
+    <div className="file-upload-container">
+      <h2>Upload Quiz File</h2>
+      <div className="form-container">
+        <input type="text" name="quizName" placeholder="Quiz Name" onChange={handleInputChange} />
+        <input type="datetime-local" name="startTime" placeholder="Start Time" onChange={handleInputChange} />
+        <input type="datetime-local" name="endTime" placeholder="End Time" onChange={handleInputChange} />
+        <input type="number" name="marksPerQuestion" placeholder="Marks Per Question" onChange={handleInputChange} />
         <input type="file" onChange={handleFileChange} />
         <button onClick={uploadFile}>Upload</button>
       </div>
+      <a href="https://project-quiz.s3.amazonaws.com/quiz-format.txt" style={{'textDecoration': 'none', 'color' : 'black'}}> Download Quiz File Format</a>
     </div>
   );
 }

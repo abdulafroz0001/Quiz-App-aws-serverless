@@ -11,7 +11,7 @@ function App() {
       <Routes>
         <Route path='/' Component={AdminDashboard}/>
         <Route path='/addCourse' Component={AddCourse}/>
-        <Route path='/addQuiz' Component={FileUpload}/>
+        <Route path='/courses/:id/addQuiz' Component={FileUpload}/>
         <Route path="/courses/:id" Component={QuizDashboard}/>
         <Route path="/courses/:cid/quiz_data/:qid" Component={QuizData}/>
       </Routes>

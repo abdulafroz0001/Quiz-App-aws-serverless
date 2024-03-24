@@ -15,8 +15,8 @@ const QuizDashboard = () => {
         if (!response.ok) {
           throw new Error('Failed to fetch course details');
         }
+        console.log(response)
         const data = await response.json();
-        console.log(data)
         setCourse(data.body);
       } catch (error) {
         console.error('Error fetching course details:', error);
@@ -38,15 +38,13 @@ const QuizDashboard = () => {
             <p>Credits: {course.credits}</p>
             <p>Total Quizes : {course.total_quizes}</p>
             <div className='button'>
-              <a href='/addQuiz'>Add Quiz</a>
+              <a href={`${id}/addQuiz`}>Add Quiz</a>
             </div>
           </div>
           {/* Add additional course details as needed */}
           
           <QuizList quizes={course.quizes}/>
-        
-          
-          
+
         </div>
       ) : (
         <>
