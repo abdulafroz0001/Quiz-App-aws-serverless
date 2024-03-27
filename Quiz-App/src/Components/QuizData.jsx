@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import './quizData.css'
 import axios from 'axios';
 import {useParams } from 'react-router-dom'
+import LoadingSkeleton from './LoadingSkeleton';
+import QuestionCard from './QuestionCard';
 function QuizData() 
 {
-  const { cid,qid} = useParams();
+  const { sid,qid} = useParams();
   const [questions, setQuestions]= useState(null)
   const [quiz, setQuiz]= useState(null)
 
@@ -57,9 +59,12 @@ function QuizData()
               
             ))}
           </div>
+          
+          <QuestionCard questions={questions}/>
         </div>
+        
       ) : (
-        <p>Loading...</p>
+        <p><LoadingSkeleton/></p>
       )}
     </div>
     </>

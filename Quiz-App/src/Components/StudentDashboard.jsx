@@ -1,16 +1,24 @@
 import React, { useState,useEffect } from 'react';
 import CourseList from './CourseList';
 import LoadingSkeleton from './LoadingSkeleton';
+import { useParams } from 'react-router-dom';
 
 
-const AdminDashboard = () => 
+const StudentDashboard = () => 
 {
+    const { sid } = useParams();
   const [courses, setCourses] = useState(null);
+  const [role , setRole] = useState(null);
   useEffect(() => {
-    localStorage.removeItem('role');
+    if(sid.includes("student_"))
+    {
+      setRole(true);
+    }
+    localStorage.setItem('role',role)
     const fetchData = async () => {
+        console.log(sid);
       try {
-        const response = await fetch('https://d1y0zdfdne.execute-api.us-east-1.amazonaws.com/prod/getCourse/all',{
+        const response = await fetch(`https://d1y0zdfdne.execute-api.us-east-1.amazonaws.com/prod/student/getCourses/${sid}`,{
           method: 'GET', // Specify the GET method explicitly
         });
         if (!response.ok) 
@@ -35,9 +43,6 @@ const AdminDashboard = () =>
   return (
     <>
     
-      <div className='button'>
-            <a href='/addCourse'>Add Course</a>
-        </div>
     
       <div>
         <h1>Course List</h1>
@@ -53,4 +58,4 @@ const AdminDashboard = () =>
   );
 };
 
-export default AdminDashboard;
+export default StudentDashboard;

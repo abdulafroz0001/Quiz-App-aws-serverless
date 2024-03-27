@@ -4,8 +4,8 @@ import './courseList.css'
 const CourseList = ({ courses }) => {
     return (
       <div className='courseList'>
-        {courses.map((course) => (
-          <CourseCard key={course.PK} course={course} />
+        {courses.map((course,index) => (
+          <CourseCard key={index} course={course} />
         ))}
       </div>
     );

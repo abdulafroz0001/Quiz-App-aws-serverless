@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import {useParams } from 'react-router-dom'
-import QuizList from './QuizList';
+
 import './quizDashboard.css'
 import LoadingSkeleton from './LoadingSkeleton';
-const QuizDashboard = () => {
-  const { id } = useParams();
+import StudentQuizList from './StudentQuizList';
+const StudentQuizDashboard = () => {
+  const { sid,cid } = useParams();
   const [course, setCourse] = useState(null);
   const role = localStorage.getItem('role');
   useEffect(() => {
@@ -13,20 +14,21 @@ const QuizDashboard = () => {
     
     const fetchCourseDetails = async () => {
       try {
-        const response = await fetch(`https://d1y0zdfdne.execute-api.us-east-1.amazonaws.com/prod/getCourse/${id}`);
+        const response = await fetch(`https://d1y0zdfdne.execute-api.us-east-1.amazonaws.com/prod/student/getCourses/${sid}/${cid}`);
         if (!response.ok) {
           throw new Error('Failed to fetch course details');
         }
+        console.log(response);
         const data = await response.json();
-        console.log(data.body)
-        setCourse(data.body);
+        console.log(data);
+        setCourse(data);
       } catch (error) {
         console.error('Error fetching course details:', error);
       }
     };
 
     fetchCourseDetails();
-  }, [id]);
+  }, [cid]);
 
   return (
     <div>
@@ -40,14 +42,14 @@ const QuizDashboard = () => {
             <p>Credits: {course.credits}</p>
             <p>Total Quizes : {course.total_quizes}</p>
             {!role ? ( <div className='button'>
-              <a href={`${id}/addQuiz`}>Add Quiz</a>
+              <a href={`${cid}/addQuiz`}>Add Quiz</a>
             </div>) : (<></>)
             }
            
           </div>
           {/* Add additional course details as needed */}
 
-          <QuizList quizes={course.quizes}/>
+          <StudentQuizList quizes={course.quizes}/>
           
         </div>
       ) : (
@@ -59,4 +61,4 @@ const QuizDashboard = () => {
   );
 };
 
-export default QuizDashboard;
+export default StudentQuizDashboard;
